@@ -1,0 +1,19 @@
+[project]
+name = "harrington-common"
+version = "0.1.0"
+description = "Shared theme, admin framework, and components for Harrington apps"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name = "Joey Harrington" },
+]
+dependencies = [
+    "streamlit>=1.30.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+dev-dependencies = []
