@@ -8,16 +8,16 @@ Shared theme, admin framework, and UI components for the Harrington app ecosyste
 |-----|--------|------|
 | pax-americana | Geopolitical predictions | 8501 |
 | rickman-sequence-demo | Retirement planning | 8502 |
-| harrington-automation-station | Lab equipment | 8503 |
+| automation-station | Lab automation | 8503 |
 | harrington-lmi | Laser-material interaction | 8504 |
 
 ## Installation
 
-Add to any app's `pyproject.toml`:
+All apps reference this as a local editable dependency via uv:
+
 ```toml
-dependencies = [
-    "harrington-common @ git+https://github.com/jtharrington1997/harrington-common.git",
-]
+[tool.uv.sources]
+harrington-common = { path = "../harrington-common", editable = true }
 ```
 
 Then:
@@ -26,28 +26,39 @@ uv sync
 ```
 
 ## Usage
-```python
-from harrington_common.theme import apply_theme, hero_banner, metric_card
-from harrington_common.admin.keys import render_api_key_manager, get_api_key
 
-# Apply dark theme
+```python
+from harrington_common.theme import apply_theme, render_header, aw_panel, esc
+from harrington_common.theme import hero_banner, metric_card, status_badge
+from harrington_common.admin.keys import load_api_keys
+
+# In any Streamlit page:
+st.set_page_config(page_title="My Page", layout="wide")
 apply_theme()
 
-# Render hero banner
-hero_banner("MY APP", "Subtitle here")
-
-# Metric cards
-metric_card("42.0", "w₀ (µm)")
-
-# API key management (admin page)
-render_api_key_manager()
-
-# Use keys in code
-key = get_api_key("anthropic")
+with aw_panel():
+    st.subheader("Section Title")
+    st.write("Content here")
 ```
 
-## What's Included
+## Theme: Americana
 
-- **Theme** — dark CSS, JetBrains Mono + Inter fonts, red accent palette, hero banners, metric cards, status badges
-- **Admin** — API key manager (Anthropic/OpenAI) with encrypted local storage at `~/.harrington/api_keys.json`
-- **Components** — reusable UI elements shared across all apps
+The shared theme uses a cream/parchment palette with navy and red accents:
+
+- **Primary (navy):** `#1a3a5c`
+- **Accent (red):** `#8b2332`
+- **Gold:** `#b8860b`
+- **Background (cream):** `#faf8f5`
+- **Parchment:** `#f0ece6`
+- **Heading font:** Playfair Display
+- **Body font:** Source Sans 3
+
+## Components
+
+- `apply_theme()` -- Inject Americana CSS
+- `render_header(title, subtitle, logo_path)` -- Standard app header
+- `aw_panel()` -- Context manager for styled card panels
+- `hero_banner(title, subtitle, accent_word)` -- Hero section
+- `metric_card(value, label, col)` -- Styled metric display
+- `status_badge(text, status)` -- Colored status indicator
+- `esc(text)` -- Escape Markdown/LaTeX special characters
