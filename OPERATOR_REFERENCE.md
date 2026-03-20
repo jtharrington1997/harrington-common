@@ -31,7 +31,7 @@ parameters, ports, paths, and procedures.
 ```bash
 ~/Projects/launch.sh           # start all four
 ~/Projects/launch.sh --serve   # start + Tailscale HTTPS exposure
-~/Projects/launch.sh stop      # stop all
+~/Projects/launch.sh --stop      # stop all
 ```
 
 ### Per-App Launch
