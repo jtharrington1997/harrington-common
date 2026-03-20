@@ -1,64 +1,78 @@
 # Harrington Common
 
-Shared theme, admin framework, and UI components for the Harrington app ecosystem.
+Shared UI, theme, and admin-support package for the Harrington app ecosystem.
 
-## Apps Using This Package
+Harrington Common provides the shared design language and reusable interface primitives used across Joey Harrington's Streamlit applications. It exists to keep branding, layout, and common admin-facing behaviors consistent across repos.
 
-| App | Domain | Port |
-|-----|--------|------|
-| pax-americana | Geopolitical predictions | 8501 |
-| rickman-sequence-demo | Retirement planning | 8502 |
-| automation-station | Lab automation | 8503 |
-| harrington-lmi | Laser-material interaction | 8504 |
+## Purpose
+
+This package centralizes:
+
+- shared Americana theme styling
+- reusable layout helpers
+- panel and card wrappers
+- common UI utilities
+- shared admin-support functionality
+- cross-app consistency for the Harrington ecosystem
+
+## Apps using this package
+
+- `pax-americana`
+- `rickman-sequence-demo`
+- `automation-station`
+- `harrington-lmi`
+
+## Theme system
+
+The shared visual language uses the Americana palette and typography standard used across the ecosystem.
+
+Representative design elements include:
+
+- navy primary styling
+- red accent styling
+- gold highlight color
+- cream/parchment surfaces
+- Playfair Display headings
+- Source Sans 3 body text
 
 ## Installation
 
-All apps reference this as a local editable dependency via uv:
+This project uses `uv`.
+
+### Install dependencies
+
+```bash
+uv sync
+```
+
+### Use as a sibling editable dependency
 
 ```toml
 [tool.uv.sources]
 harrington-common = { path = "../harrington-common", editable = true }
 ```
 
-Then:
-```bash
-uv sync
-```
-
-## Usage
+## Usage example
 
 ```python
-from harrington_common.theme import apply_theme, render_header, aw_panel, esc
-from harrington_common.theme import hero_banner, metric_card, status_badge
-from harrington_common.admin.keys import load_api_keys
+from harrington_common.theme import apply_theme, aw_panel, render_header
 
-# In any Streamlit page:
-st.set_page_config(page_title="My Page", layout="wide")
 apply_theme()
+render_header()
 
 with aw_panel():
-    st.subheader("Section Title")
-    st.write("Content here")
+    ...
 ```
 
-## Theme: Americana
+## Development notes
 
-The shared theme uses a cream/parchment palette with navy and red accents:
+- Keep app-specific business logic out of this package
+- Prefer stable shared helpers over duplicated repo-local copies
+- Commit `uv.lock` for reproducible installs across machines
 
-- **Primary (navy):** `#1a3a5c`
-- **Accent (red):** `#8b2332`
-- **Gold:** `#b8860b`
-- **Background (cream):** `#faf8f5`
-- **Parchment:** `#f0ece6`
-- **Heading font:** Playfair Display
-- **Body font:** Source Sans 3
+## Related repos
 
-## Components
-
-- `apply_theme()` -- Inject Americana CSS
-- `render_header(title, subtitle, logo_path)` -- Standard app header
-- `aw_panel()` -- Context manager for styled card panels
-- `hero_banner(title, subtitle, accent_word)` -- Hero section
-- `metric_card(value, label, col)` -- Styled metric display
-- `status_badge(text, status)` -- Colored status indicator
-- `esc(text)` -- Escape Markdown/LaTeX special characters
+- `pax-americana`
+- `rickman-sequence-demo`
+- `automation-station`
+- `harrington-lmi`
