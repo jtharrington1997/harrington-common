@@ -41,7 +41,6 @@ PORTS = {
     "harrington-pax-americana": 8501,
     "harrington-wealth-management": 8502,
     "harrington-automation-station": 8503,
-    "harrington-lmi": 8504,
     "harrington-labs": 8505,
     "harrington-health": 8506,
 }
