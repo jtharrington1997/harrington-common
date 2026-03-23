@@ -38,10 +38,12 @@ BRAND = {
 
 # Standard ports per app
 PORTS = {
-    "pax-americana": 8501,
-    "rickman-sequence-demo": 8502,
-    "automation-station": 8503,
+    "harrington-pax-americana": 8501,
+    "harrington-wealth-management": 8502,
+    "harrington-automation-station": 8503,
     "harrington-lmi": 8504,
+    "harrington-labs": 8505,
+    "harrington-health": 8506,
 }
 
 
