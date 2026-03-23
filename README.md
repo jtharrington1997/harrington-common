@@ -1,78 +1,57 @@
-# Harrington Common
+# harrington-common
 
-Shared UI, theme, and admin-support package for the Harrington app ecosystem.
+Shared UI theme, reporting infrastructure, and admin framework for the Harrington app ecosystem.
 
-Harrington Common provides the shared design language and reusable interface primitives used across Joey Harrington's Streamlit applications. It exists to keep branding, layout, and common admin-facing behaviors consistent across repos.
+## What It Provides
 
-## Purpose
+**Americana Theme** — Consistent visual language across all apps: navy primary, red accent, gold highlights, cream/parchment surfaces, Playfair Display headings, Source Sans 3 body text. One `apply_theme()` call styles any Streamlit app.
 
-This package centralizes:
+**Layout Components** — `render_header()`, `aw_panel()` context manager, `hero_banner()`, `metric_card()`, `status_badge()`. All apps use these for consistent panel styling and navigation.
 
-- shared Americana theme styling
-- reusable layout helpers
-- panel and card wrappers
-- common UI utilities
-- shared admin-support functionality
-- cross-app consistency for the Harrington ecosystem
+**Reporting Infrastructure** — `harrington_common.reporting` provides LaTeX document generation, gnuplot figure export, and PDF compilation. Every app can produce professional branded reports from the command line without touching Streamlit.
 
-## Apps using this package
+**Admin Support** — Shared admin panel, API key management, and access control helpers.
 
-- `pax-americana`
-- `rickman-sequence-demo`
-- `automation-station`
-- `harrington-lmi`
+## Consuming Apps
 
-## Theme system
+| App | Port | Purpose |
+|-----|------|---------|
+| harrington-labs | 8505 | Photonics lab simulators + LMI platform |
+| harrington-wealth-management | 8502 | Retirement simulation + budget tracking |
+| harrington-health | 8506 | Health analysis and clinical reporting |
+| harrington-pax-americana | 8501 | Geo-strategic intelligence platform |
+| harrington-automation-station | 8503 | Lab automation and beam profiling |
 
-The shared visual language uses the Americana palette and typography standard used across the ecosystem.
+## Reporting API
 
-Representative design elements include:
+```python
+from harrington_common.reporting import (
+    build_report_pdf, ReportConfig, ReportSection, latex_table,
+    write_gnuplot_bundle, GnuplotSpec, GnuplotSeries,
+)
 
-- navy primary styling
-- red accent styling
-- gold highlight color
-- cream/parchment surfaces
-- Playfair Display headings
-- Source Sans 3 body text
+sections = [
+    ReportSection(title="Results", content="Analysis complete.", tables=[
+        latex_table(["Metric", "Value"], [["Power", "50 W"], ["Efficiency", "65%"]])
+    ]),
+]
+build_report_pdf(sections, "output/report.pdf", ReportConfig(title="My Report"))
+```
 
 ## Installation
 
-This project uses `uv`.
-
-### Install dependencies
-
 ```bash
+# As workspace member (preferred)
 uv sync
+
+# As sibling editable dependency
+pip install -e ../harrington-common
 ```
 
-### Use as a sibling editable dependency
+## TODO
 
-```toml
-[tool.uv.sources]
-harrington-common = { path = "../harrington-common", editable = true }
-```
-
-## Usage example
-
-```python
-from harrington_common.theme import apply_theme, aw_panel, render_header
-
-apply_theme()
-render_header()
-
-with aw_panel():
-    ...
-```
-
-## Development notes
-
-- Keep app-specific business logic out of this package
-- Prefer stable shared helpers over duplicated repo-local copies
-- Commit `uv.lock` for reproducible installs across machines
-
-## Related repos
-
-- `pax-americana`
-- `rickman-sequence-demo`
-- `automation-station`
-- `harrington-lmi`
+- [ ] Add report templates per app (LMI simulation report, health lab report, budget summary)
+- [ ] Move gnuplot color palette and figure sizing defaults into reporting config
+- [ ] Add shared Streamlit components for file export (download buttons, format selection)
+- [ ] Standardize admin panel across all apps (currently each app has slight variations)
+- [ ] Add dark mode theme variant
