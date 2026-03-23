@@ -1,7 +1,7 @@
-"""Harrington Common — shared theme, admin, and components."""
+"""Harrington Common — shared theme, admin, compute, and components."""
 from __future__ import annotations
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 # Convenient re-exports
 from .theme import (  # noqa: F401
@@ -15,4 +15,22 @@ from .theme import (  # noqa: F401
     esc,
     BRAND,
     PORTS,
+)
+
+# Compute layer (lazy — no heavy imports at module level)
+from .compute import (  # noqa: F401
+    Backend,
+    active_backend,
+    backend_info,
+    jit,
+    vectorize,
+    prange,
+    get_array_module,
+    to_device,
+    to_host,
+    parallel_map,
+    parameter_sweep,
+    render_compute_info,
+    HAS_NUMBA,
+    HAS_CUPY,
 )
