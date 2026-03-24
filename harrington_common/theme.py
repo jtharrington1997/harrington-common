@@ -624,14 +624,14 @@ def plotly_layout(**overrides) -> dict:
     Usage:
         fig.update_layout(**plotly_layout(height=400, xaxis_title="Time"))
 
-    In dark mode, uses plotly_dark template with dark backgrounds.
+    In dark mode, uses plotly_dark template with semi-transparent dark backgrounds.
     In light mode, uses plotly_white with transparent backgrounds.
     """
     dark = _is_dark_mode()
     base = {
         "template": "plotly_dark" if dark else "plotly_white",
-        "paper_bgcolor": "rgba(14,17,23,0.0)" if dark else "rgba(0,0,0,0)",
-        "plot_bgcolor": "rgba(14,17,23,0.0)" if dark else "rgba(0,0,0,0)",
+        "paper_bgcolor": "rgba(22,25,32,0.8)" if dark else "rgba(0,0,0,0)",
+        "plot_bgcolor": "rgba(14,17,23,0.5)" if dark else "rgba(0,0,0,0)",
         "font": {
             "family": BRAND["font_body"],
             "color": "#e6e8ec" if dark else "#1a1a2e",
@@ -654,6 +654,20 @@ def plotly_line_color() -> str:
 def plotly_accent_color() -> str:
     """Return the accent line color for the current mode."""
     return "#d4626f" if _is_dark_mode() else "#8b2332"
+
+
+def plotly_ref_range_style() -> dict:
+    """Return fill style for reference range shading on charts.
+
+    Usage:
+        fig.add_hrect(y0=low, y1=high, **plotly_ref_range_style())
+    """
+    dark = _is_dark_mode()
+    return {
+        "fillcolor": "rgba(74,222,128,0.15)" if dark else "rgba(0,128,0,0.07)",
+        "line_width": 0,
+        "annotation_font_color": "#9ca3af" if dark else "#5c5c6e",
+    }
 
 
 # ── Components ───────────────────────────────────────────────────────────────
