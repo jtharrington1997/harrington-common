@@ -74,6 +74,15 @@ def _detect_cupy() -> bool:
 HAS_NUMBA: bool = _detect_numba()
 HAS_CUPY: bool = _detect_cupy()
 
+# Module-level prange for use inside @jit(parallel=True) functions.
+# Numba requires numba.prange as a first-class object in the function body;
+# a Python wrapper won't work because Numba compiles the function at JIT time.
+if HAS_NUMBA:
+    import numba as _nb
+    _prange = _nb.prange
+else:
+    _prange = range  # type: ignore[assignment]
+
 
 def active_backend() -> Backend:
     """Return the highest-priority available backend."""
@@ -299,7 +308,7 @@ def _trapz_kernel(y, dx):
 def _beer_lambert_step(irradiance, alpha_cm, beta_cm_per_w, dz_cm, n_points):
     """Vectorized Beer-Lambert propagation step with NLA."""
     out = np.empty(n_points)
-    for i in range(n_points):  # will be parallelized by numba
+    for i in _prange(n_points):
         I = irradiance[i]
         if alpha_cm > 0.0:
             lin_factor = math.exp(-alpha_cm * dz_cm)
@@ -446,7 +455,7 @@ def _transfer_matrix_stack(wavelengths_m, n_layers, d_layers_m, theta_rad, polar
     reflectance = np.empty(n_wl)
     n_ly = len(n_layers)
 
-    for w in range(n_wl):  # parallelized
+    for w in _prange(n_wl):
         lam = wavelengths_m[w]
         # Initialize transfer matrix as identity
         M00_r, M00_i = 1.0, 0.0
@@ -517,7 +526,7 @@ def _monte_carlo_retirement_paths(
     balances = np.zeros((n_sims, n_years))
     ruin_year = np.full(n_sims, -1, dtype=np.int64)
 
-    for sim in range(n_sims):  # parallelized
+    for sim in _prange(n_sims):
         # Simple LCG PRNG (numba-compatible, seeded per simulation)
         rng_state = np.uint64(seed + sim * 6364136223846793005)
         bal = start_balance
