@@ -514,9 +514,12 @@ code, .stCode {{
 def apply_theme() -> None:
     """Inject the shared Americana CSS into the current Streamlit page.
 
-    Detects dark mode and adds a `dark-mode` CSS class to the app root
-    so the dark palette overrides activate automatically.
+    Detects dark mode via Streamlit config and injects the appropriate
+    CSS variable overrides. When the user toggles Settings → Theme → Dark,
+    Streamlit restarts the app and `theme.base` changes to "dark".
     """
+    dark = _is_dark_mode()
+
     st.markdown(
         _CSS.format(
             fh=BRAND["font_heading"],
@@ -530,32 +533,82 @@ def apply_theme() -> None:
         ),
         unsafe_allow_html=True,
     )
-    # Inject JS to add dark-mode class when Streamlit is in dark mode.
-    # This bridges the gap between Streamlit's theme config and CSS selectors.
-    st.markdown(
-        """<script>
-        (function() {
-            const app = document.querySelector('.stApp');
-            if (!app) return;
-            const style = getComputedStyle(document.documentElement);
-            const bg = style.getPropertyValue('--background-color') || '';
-            // Detect dark theme by checking computed background luminance
-            const body = getComputedStyle(document.body);
-            const bodyBg = body.backgroundColor;
-            if (bodyBg) {
-                const m = bodyBg.match(/\\d+/g);
-                if (m && m.length >= 3) {
-                    const lum = (0.299*m[0] + 0.587*m[1] + 0.114*m[2]) / 255;
-                    if (lum < 0.35) {
-                        app.classList.add('dark-mode');
-                        app.setAttribute('data-theme', 'dark');
-                    }
-                }
-            }
-        })();
-        </script>""",
-        unsafe_allow_html=True,
-    )
+
+    # If dark mode is active, inject overrides that remap all CSS variables
+    if dark:
+        dk = BRAND_DARK
+        st.markdown(
+            f"""<style>
+            :root, .stApp {{
+              --aw-navy: {dk['primary_text']};
+              --aw-navy-hover: #9dc4e8;
+              --aw-red: #d4626f;
+              --aw-gold: #d4a843;
+              --aw-cream: {dk['bg']};
+              --aw-parchment: {dk['parchment']};
+              --aw-ink: {dk['ink']};
+              --aw-muted: {dk['muted']};
+              --aw-panel-bg: {dk['panel_bg']};
+              --aw-border: {dk['border']};
+              --aw-border-accent: {dk['border_accent']};
+              --aw-shadow: {dk['shadow']};
+            }}
+            .stApp {{
+              background: {dk['bg']} !important;
+              background-image:
+                radial-gradient(ellipse at 20% 0%, rgba(126,174,212,0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 100%, rgba(212,98,111,0.03) 0%, transparent 50%) !important;
+            }}
+            section[data-testid="stSidebar"] {{
+              background: {dk['parchment']} !important;
+              border-right-color: {dk['border']} !important;
+            }}
+            h1 {{ color: {dk['heading']} !important; border-bottom-color: #d4626f !important; }}
+            h2 {{ color: {dk['heading']} !important; }}
+            h3, h4, h5, h6 {{ color: {dk['ink']} !important; }}
+            .stMarkdown, .stText, label, p, li {{ color: {dk['ink']} !important; }}
+            .stCaption, small {{ color: {dk['muted']} !important; }}
+            a {{ color: {dk['primary_text']} !important; }}
+            a:hover {{ color: #d4626f !important; }}
+            div[data-testid="stMetric"] {{
+              background: {dk['panel_bg']} !important;
+              border-color: {dk['border']} !important;
+            }}
+            div[data-testid="stMetric"] [data-testid="stMetricValue"] {{
+              color: {dk['heading']} !important;
+            }}
+            div[data-testid="stExpander"] {{
+              background: rgba(30,33,40,0.4) !important;
+              border-color: {dk['border']} !important;
+            }}
+            input[type="text"], textarea {{
+              background: rgba(30,33,40,0.6) !important;
+              border-color: rgba(255,255,255,0.12) !important;
+              color: {dk['ink']} !important;
+            }}
+            code, .stCode {{
+              background: {dk['code_bg']} !important;
+              border-color: {dk['border']} !important;
+              color: {dk['ink']} !important;
+            }}
+            button[data-baseweb="tab"][aria-selected="true"] {{
+              color: {dk['primary_text']} !important;
+            }}
+            .hw-hero {{
+              background: linear-gradient(135deg, {dk['bg']} 0%, {dk['parchment']} 50%, {dk['surface']} 100%) !important;
+              border-color: {dk['border']} !important;
+              border-left-color: #d4626f !important;
+            }}
+            .hw-hero h1 {{ color: {dk['heading']} !important; }}
+            .hw-metric {{
+              background: {dk['panel_bg']} !important;
+              border-color: {dk['border']} !important;
+            }}
+            .hw-metric .metric-val {{ color: {dk['heading']} !important; }}
+            .status-ok {{ color: #4ade80 !important; }}
+            </style>""",
+            unsafe_allow_html=True,
+        )
 
 
 # Alias for backward compatibility with pax-americana
