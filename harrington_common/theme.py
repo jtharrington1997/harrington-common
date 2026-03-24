@@ -377,134 +377,6 @@ code, .stCode {{
 .status-err {{ color: var(--aw-red); font-weight: 600; }}
 .status-off {{ color: var(--aw-muted); font-weight: 600; }}
 
-/* ─── Dark mode overrides ─────────────────────────────────────────────────── */
-/* Applied when Streamlit is set to dark theme or system prefers dark */
-
-.stApp[data-theme="dark"],
-.stApp.dark-mode {{
-  --aw-navy: #7eaed4;
-  --aw-navy-hover: #9dc4e8;
-  --aw-red: #d4626f;
-  --aw-gold: #d4a843;
-  --aw-cream: #0e1117;
-  --aw-parchment: #161920;
-  --aw-ink: #e6e8ec;
-  --aw-muted: #9ca3af;
-  --aw-panel-bg: rgba(30,33,40,0.75);
-  --aw-border: rgba(255,255,255,0.10);
-  --aw-border-accent: rgba(212,98,111,0.25);
-  --aw-shadow: 0 1px 3px rgba(0,0,0,0.3);
-}}
-
-.stApp[data-theme="dark"] .stApp,
-.stApp.dark-mode .stApp,
-.stApp[data-theme="dark"],
-.stApp.dark-mode {{
-  background: #0e1117 !important;
-  background-image:
-    radial-gradient(ellipse at 20%% 0%%, rgba(126,174,212,0.04) 0%%, transparent 50%%),
-    radial-gradient(ellipse at 80%% 100%%, rgba(212,98,111,0.03) 0%%, transparent 50%%) !important;
-}}
-
-.stApp[data-theme="dark"] section[data-testid="stSidebar"],
-.stApp.dark-mode section[data-testid="stSidebar"] {{
-  background: #161920 !important;
-  border-right-color: rgba(255,255,255,0.08) !important;
-}}
-
-.stApp[data-theme="dark"] div[data-testid="stMetric"],
-.stApp.dark-mode div[data-testid="stMetric"] {{
-  background: rgba(30,33,40,0.6) !important;
-  border-color: rgba(255,255,255,0.08) !important;
-}}
-
-.stApp[data-theme="dark"] div[data-testid="stMetric"] [data-testid="stMetricValue"],
-.stApp.dark-mode div[data-testid="stMetric"] [data-testid="stMetricValue"] {{
-  color: #c5d0e6 !important;
-}}
-
-.stApp[data-theme="dark"] div[data-testid="stExpander"],
-.stApp.dark-mode div[data-testid="stExpander"] {{
-  background: rgba(30,33,40,0.4) !important;
-  border-color: rgba(255,255,255,0.08) !important;
-}}
-
-.stApp[data-theme="dark"] input[type="text"],
-.stApp[data-theme="dark"] textarea,
-.stApp.dark-mode input[type="text"],
-.stApp.dark-mode textarea {{
-  background: rgba(30,33,40,0.6) !important;
-  border-color: rgba(255,255,255,0.12) !important;
-  color: #e6e8ec !important;
-}}
-
-.stApp[data-theme="dark"] code, .stApp[data-theme="dark"] .stCode,
-.stApp.dark-mode code, .stApp.dark-mode .stCode {{
-  background: #1a1d24 !important;
-  border-color: rgba(255,255,255,0.08) !important;
-  color: #e6e8ec !important;
-}}
-
-.stApp[data-theme="dark"] h1,
-.stApp.dark-mode h1 {{
-  color: #c5d0e6 !important;
-  border-bottom-color: #d4626f !important;
-}}
-
-.stApp[data-theme="dark"] h2,
-.stApp.dark-mode h2 {{
-  color: #c5d0e6 !important;
-}}
-
-.stApp[data-theme="dark"] a,
-.stApp.dark-mode a {{
-  color: #7eaed4 !important;
-}}
-.stApp[data-theme="dark"] a:hover,
-.stApp.dark-mode a:hover {{
-  color: #d4626f !important;
-}}
-
-.stApp[data-theme="dark"] button[data-baseweb="tab"][aria-selected="true"],
-.stApp.dark-mode button[data-baseweb="tab"][aria-selected="true"] {{
-  color: #7eaed4 !important;
-}}
-
-.stApp[data-theme="dark"] .hw-hero,
-.stApp.dark-mode .hw-hero {{
-  background: linear-gradient(135deg, #0e1117 0%%, #161920 50%%, #1a1d24 100%%) !important;
-  border-color: rgba(255,255,255,0.08) !important;
-  border-left-color: #d4626f !important;
-}}
-.stApp[data-theme="dark"] .hw-hero h1,
-.stApp.dark-mode .hw-hero h1 {{
-  color: #c5d0e6 !important;
-}}
-
-.stApp[data-theme="dark"] .hw-metric,
-.stApp.dark-mode .hw-metric {{
-  background: rgba(30,33,40,0.6) !important;
-  border-color: rgba(255,255,255,0.08) !important;
-}}
-.stApp[data-theme="dark"] .hw-metric .metric-val,
-.stApp.dark-mode .hw-metric .metric-val {{
-  color: #c5d0e6 !important;
-}}
-
-.stApp[data-theme="dark"] .status-ok,
-.stApp.dark-mode .status-ok {{ color: #4ade80 !important; }}
-
-/* Also handle the system preference for browsers */
-@media (prefers-color-scheme: dark) {{
-  :root {{
-    --aw-navy: #7eaed4;
-    --aw-red: #d4626f;
-    --aw-gold: #d4a843;
-    --aw-ink: #e6e8ec;
-    --aw-muted: #9ca3af;
-  }}
-}}
-
 </style>"""
 
 
@@ -514,12 +386,8 @@ code, .stCode {{
 def apply_theme() -> None:
     """Inject the shared Americana CSS into the current Streamlit page.
 
-    Detects dark mode via Streamlit config and injects the appropriate
-    CSS variable overrides. When the user toggles Settings → Theme → Dark,
-    Streamlit restarts the app and `theme.base` changes to "dark".
+    The suite is locked to light mode via config.toml (base = 'light').
     """
-    dark = _is_dark_mode()
-
     st.markdown(
         _CSS.format(
             fh=BRAND["font_heading"],
@@ -534,82 +402,6 @@ def apply_theme() -> None:
         unsafe_allow_html=True,
     )
 
-    # If dark mode is active, inject overrides that remap all CSS variables
-    if dark:
-        dk = BRAND_DARK
-        st.markdown(
-            f"""<style>
-            :root, .stApp {{
-              --aw-navy: {dk['primary_text']};
-              --aw-navy-hover: #9dc4e8;
-              --aw-red: #d4626f;
-              --aw-gold: #d4a843;
-              --aw-cream: {dk['bg']};
-              --aw-parchment: {dk['parchment']};
-              --aw-ink: {dk['ink']};
-              --aw-muted: {dk['muted']};
-              --aw-panel-bg: {dk['panel_bg']};
-              --aw-border: {dk['border']};
-              --aw-border-accent: {dk['border_accent']};
-              --aw-shadow: {dk['shadow']};
-            }}
-            .stApp {{
-              background: {dk['bg']} !important;
-              background-image:
-                radial-gradient(ellipse at 20% 0%, rgba(126,174,212,0.04) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 100%, rgba(212,98,111,0.03) 0%, transparent 50%) !important;
-            }}
-            section[data-testid="stSidebar"] {{
-              background: {dk['parchment']} !important;
-              border-right-color: {dk['border']} !important;
-            }}
-            h1 {{ color: {dk['heading']} !important; border-bottom-color: #d4626f !important; }}
-            h2 {{ color: {dk['heading']} !important; }}
-            h3, h4, h5, h6 {{ color: {dk['ink']} !important; }}
-            .stMarkdown, .stText, label, p, li {{ color: {dk['ink']} !important; }}
-            .stCaption, small {{ color: {dk['muted']} !important; }}
-            a {{ color: {dk['primary_text']} !important; }}
-            a:hover {{ color: #d4626f !important; }}
-            div[data-testid="stMetric"] {{
-              background: {dk['panel_bg']} !important;
-              border-color: {dk['border']} !important;
-            }}
-            div[data-testid="stMetric"] [data-testid="stMetricValue"] {{
-              color: {dk['heading']} !important;
-            }}
-            div[data-testid="stExpander"] {{
-              background: rgba(30,33,40,0.4) !important;
-              border-color: {dk['border']} !important;
-            }}
-            input[type="text"], textarea {{
-              background: rgba(30,33,40,0.6) !important;
-              border-color: rgba(255,255,255,0.12) !important;
-              color: {dk['ink']} !important;
-            }}
-            code, .stCode {{
-              background: {dk['code_bg']} !important;
-              border-color: {dk['border']} !important;
-              color: {dk['ink']} !important;
-            }}
-            button[data-baseweb="tab"][aria-selected="true"] {{
-              color: {dk['primary_text']} !important;
-            }}
-            .hw-hero {{
-              background: linear-gradient(135deg, {dk['bg']} 0%, {dk['parchment']} 50%, {dk['surface']} 100%) !important;
-              border-color: {dk['border']} !important;
-              border-left-color: #d4626f !important;
-            }}
-            .hw-hero h1 {{ color: {dk['heading']} !important; }}
-            .hw-metric {{
-              background: {dk['panel_bg']} !important;
-              border-color: {dk['border']} !important;
-            }}
-            .hw-metric .metric-val {{ color: {dk['heading']} !important; }}
-            .status-ok {{ color: #4ade80 !important; }}
-            </style>""",
-            unsafe_allow_html=True,
-        )
-
 
 # Alias for backward compatibility with pax-americana
 apply_brand_css = apply_theme
@@ -619,54 +411,45 @@ apply_brand_css = apply_theme
 
 
 def plotly_layout(**overrides) -> dict:
-    """Return a Plotly layout dict that adapts to light/dark mode.
+    """Return a Plotly layout dict with Americana light styling.
 
     Usage:
         fig.update_layout(**plotly_layout(height=400, xaxis_title="Time"))
-
-    In dark mode, uses plotly_dark template with semi-transparent dark backgrounds.
-    In light mode, uses plotly_white with transparent backgrounds.
     """
-    dark = _is_dark_mode()
     base = {
-        "template": "plotly_dark" if dark else "plotly_white",
-        "paper_bgcolor": "rgba(22,25,32,0.8)" if dark else "rgba(0,0,0,0)",
-        "plot_bgcolor": "rgba(14,17,23,0.5)" if dark else "rgba(0,0,0,0)",
+        "template": "plotly_white",
+        "paper_bgcolor": "rgba(0,0,0,0)",
+        "plot_bgcolor": "rgba(0,0,0,0)",
         "font": {
             "family": BRAND["font_body"],
-            "color": "#e6e8ec" if dark else "#1a1a2e",
+            "color": "#1a1a2e",
         },
-        "colorway": (
-            ["#7eaed4", "#d4626f", "#d4a843", "#4ade80", "#a78bfa", "#f472b6"]
-            if dark else
-            ["#1a3a5c", "#8b2332", "#b8860b", "#2d6a4f", "#6b21a8", "#be185d"]
-        ),
+        "colorway": ["#1a3a5c", "#8b2332", "#b8860b", "#2d6a4f", "#6b21a8", "#be185d"],
     }
     base.update(overrides)
     return base
 
 
 def plotly_line_color() -> str:
-    """Return the primary line color for the current mode."""
-    return "#7eaed4" if _is_dark_mode() else "#1a3a5c"
+    """Primary line color (navy)."""
+    return "#1a3a5c"
 
 
 def plotly_accent_color() -> str:
-    """Return the accent line color for the current mode."""
-    return "#d4626f" if _is_dark_mode() else "#8b2332"
+    """Accent line color (red)."""
+    return "#8b2332"
 
 
 def plotly_ref_range_style() -> dict:
-    """Return fill style for reference range shading on charts.
+    """Fill style for reference range shading on charts.
 
     Usage:
         fig.add_hrect(y0=low, y1=high, **plotly_ref_range_style())
     """
-    dark = _is_dark_mode()
     return {
-        "fillcolor": "rgba(74,222,128,0.15)" if dark else "rgba(0,128,0,0.07)",
+        "fillcolor": "rgba(0,128,0,0.07)",
         "line_width": 0,
-        "annotation_font_color": "#9ca3af" if dark else "#5c5c6e",
+        "annotation_font_color": "#5c5c6e",
     }
 
 
