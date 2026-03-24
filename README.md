@@ -36,11 +36,11 @@ Environment variables: `HARRINGTON_NO_JIT=1` (force NumPy), `HARRINGTON_NO_CUDA=
 
 | App | Port | Purpose |
 |-----|------|---------|
-| harrington-labs | 8505 | Photonics lab simulators + LMI platform |
+| harrington-pax-americana | 8501 | Geo-stragic intelligence platform |
 | harrington-wealth-management | 8502 | Retirement simulation + budget tracking |
-| harrington-health | 8506 | Health analysis and clinical reporting |
-| harrington-pax-americana | 8501 | Geo-strategic intelligence platform |
 | harrington-automation-station | 8503 | Lab automation and beam profiling |
+| harrington-health | 8504 | Health analysis and clinical reporting |
+| harrington-labs | 8505 | Photonics lab simulators + LMI platform |
 
 ## Installation
 
