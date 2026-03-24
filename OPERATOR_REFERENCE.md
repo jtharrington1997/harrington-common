@@ -23,7 +23,7 @@ parameters, ports, paths, and procedures.
 | pax-americana | 8501 | 443 | Geopolitical predictions |
 | rickman-sequence-demo | 8502 | 8443 | Retirement planning (Alliance Wealth) |
 | automation-station | 8503 | 8444 | Lab hardware + beam profiling |
-| harrington-lmi | 8504 | 8445 | Laser-material interaction modeling |
+| harrington-labs | 8505 | — | Photonics lab sims + LMI modeling (merged from harrington-lmi) |
 | harrington-common | — | — | Shared theme + admin framework |
 
 ### Launch / Stop All Apps
