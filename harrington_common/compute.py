@@ -358,18 +358,25 @@ def _thermal_accumulation(
     n_pulses_max, delta_t_single, l_heat, l_between, t_ambient_k
 ):
     """Multi-pulse thermal accumulation — JIT-accelerated."""
-    t_accum = np.zeros(n_pulses_max)
+    t_accum = np.empty(n_pulses_max, dtype=np.float64)
+    if n_pulses_max <= 0:
+        return t_accum
+
+    contributions = np.empty(n_pulses_max, dtype=np.float64)
+    contributions[0] = delta_t_single
+
+    l_heat_sq = l_heat * l_heat
+    l_between_sq = l_between * l_between
+
+    for n in range(1, n_pulses_max):
+        denom = math.sqrt(l_heat_sq + n * l_between_sq)
+        contributions[n] = 0.0 if denom <= 0.0 else delta_t_single * l_heat / denom
+
+    running = t_ambient_k
     for i in range(n_pulses_max):
-        contributions = 0.0
-        for j in range(i + 1):
-            n_elapsed = i - j
-            if n_elapsed == 0:
-                contributions += delta_t_single
-            else:
-                denom = math.sqrt(l_heat ** 2 + n_elapsed * l_between ** 2)
-                if denom > 0.0:
-                    contributions += delta_t_single * l_heat / denom
-        t_accum[i] = t_ambient_k + contributions
+        running += contributions[i]
+        t_accum[i] = running
+
     return t_accum
 
 
