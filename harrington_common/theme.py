@@ -46,6 +46,59 @@ PORTS = {
 }
 
 
+# ── Dark-mode palette ────────────────────────────────────────────────────────
+# Streamlit exposes its theme via `st.get_option("theme.base")` and via the
+# custom component message channel.  However, the most reliable detection is
+# the CSS `prefers-color-scheme` media query combined with checking the
+# Streamlit config `theme.base`.
+
+BRAND_DARK = {
+    "bg": "#0e1117",
+    "surface": "#1a1d24",
+    "panel_bg": "rgba(30,33,40,0.75)",
+    "ink": "#e6e8ec",
+    "muted": "#9ca3af",
+    "border": "rgba(255,255,255,0.10)",
+    "border_accent": "rgba(139,35,50,0.25)",
+    "shadow": "0 1px 3px rgba(0,0,0,0.3)",
+    "heading": "#c5d0e6",
+    "primary_text": "#7eaed4",
+    "code_bg": "#1a1d24",
+    "parchment": "#161920",
+}
+
+
+def _is_dark_mode() -> bool:
+    """Detect whether Streamlit is running in dark mode.
+
+    Checks `theme.base` in the Streamlit config.  Falls back to False
+    (light mode) if the option isn't set.
+    """
+    try:
+        base = st.get_option("theme.base")
+        if base == "dark":
+            return True
+    except Exception:
+        pass
+    # Also check the background color — if it's very dark, assume dark mode
+    try:
+        bg = st.get_option("theme.backgroundColor")
+        if bg and bg.startswith("#"):
+            r = int(bg[1:3], 16)
+            g = int(bg[3:5], 16)
+            b = int(bg[5:7], 16)
+            luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+            return luminance < 0.4
+    except Exception:
+        pass
+    return False
+
+
+def is_dark_mode() -> bool:
+    """Public API to check if dark mode is active."""
+    return _is_dark_mode()
+
+
 # ── CSS ──────────────────────────────────────────────────────────────────────
 
 _CSS = """<style>
@@ -324,6 +377,134 @@ code, .stCode {{
 .status-err {{ color: var(--aw-red); font-weight: 600; }}
 .status-off {{ color: var(--aw-muted); font-weight: 600; }}
 
+/* ─── Dark mode overrides ─────────────────────────────────────────────────── */
+/* Applied when Streamlit is set to dark theme or system prefers dark */
+
+.stApp[data-theme="dark"],
+.stApp.dark-mode {{
+  --aw-navy: #7eaed4;
+  --aw-navy-hover: #9dc4e8;
+  --aw-red: #d4626f;
+  --aw-gold: #d4a843;
+  --aw-cream: #0e1117;
+  --aw-parchment: #161920;
+  --aw-ink: #e6e8ec;
+  --aw-muted: #9ca3af;
+  --aw-panel-bg: rgba(30,33,40,0.75);
+  --aw-border: rgba(255,255,255,0.10);
+  --aw-border-accent: rgba(212,98,111,0.25);
+  --aw-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}}
+
+.stApp[data-theme="dark"] .stApp,
+.stApp.dark-mode .stApp,
+.stApp[data-theme="dark"],
+.stApp.dark-mode {{
+  background: #0e1117 !important;
+  background-image:
+    radial-gradient(ellipse at 20%% 0%%, rgba(126,174,212,0.04) 0%%, transparent 50%%),
+    radial-gradient(ellipse at 80%% 100%%, rgba(212,98,111,0.03) 0%%, transparent 50%%) !important;
+}}
+
+.stApp[data-theme="dark"] section[data-testid="stSidebar"],
+.stApp.dark-mode section[data-testid="stSidebar"] {{
+  background: #161920 !important;
+  border-right-color: rgba(255,255,255,0.08) !important;
+}}
+
+.stApp[data-theme="dark"] div[data-testid="stMetric"],
+.stApp.dark-mode div[data-testid="stMetric"] {{
+  background: rgba(30,33,40,0.6) !important;
+  border-color: rgba(255,255,255,0.08) !important;
+}}
+
+.stApp[data-theme="dark"] div[data-testid="stMetric"] [data-testid="stMetricValue"],
+.stApp.dark-mode div[data-testid="stMetric"] [data-testid="stMetricValue"] {{
+  color: #c5d0e6 !important;
+}}
+
+.stApp[data-theme="dark"] div[data-testid="stExpander"],
+.stApp.dark-mode div[data-testid="stExpander"] {{
+  background: rgba(30,33,40,0.4) !important;
+  border-color: rgba(255,255,255,0.08) !important;
+}}
+
+.stApp[data-theme="dark"] input[type="text"],
+.stApp[data-theme="dark"] textarea,
+.stApp.dark-mode input[type="text"],
+.stApp.dark-mode textarea {{
+  background: rgba(30,33,40,0.6) !important;
+  border-color: rgba(255,255,255,0.12) !important;
+  color: #e6e8ec !important;
+}}
+
+.stApp[data-theme="dark"] code, .stApp[data-theme="dark"] .stCode,
+.stApp.dark-mode code, .stApp.dark-mode .stCode {{
+  background: #1a1d24 !important;
+  border-color: rgba(255,255,255,0.08) !important;
+  color: #e6e8ec !important;
+}}
+
+.stApp[data-theme="dark"] h1,
+.stApp.dark-mode h1 {{
+  color: #c5d0e6 !important;
+  border-bottom-color: #d4626f !important;
+}}
+
+.stApp[data-theme="dark"] h2,
+.stApp.dark-mode h2 {{
+  color: #c5d0e6 !important;
+}}
+
+.stApp[data-theme="dark"] a,
+.stApp.dark-mode a {{
+  color: #7eaed4 !important;
+}}
+.stApp[data-theme="dark"] a:hover,
+.stApp.dark-mode a:hover {{
+  color: #d4626f !important;
+}}
+
+.stApp[data-theme="dark"] button[data-baseweb="tab"][aria-selected="true"],
+.stApp.dark-mode button[data-baseweb="tab"][aria-selected="true"] {{
+  color: #7eaed4 !important;
+}}
+
+.stApp[data-theme="dark"] .hw-hero,
+.stApp.dark-mode .hw-hero {{
+  background: linear-gradient(135deg, #0e1117 0%%, #161920 50%%, #1a1d24 100%%) !important;
+  border-color: rgba(255,255,255,0.08) !important;
+  border-left-color: #d4626f !important;
+}}
+.stApp[data-theme="dark"] .hw-hero h1,
+.stApp.dark-mode .hw-hero h1 {{
+  color: #c5d0e6 !important;
+}}
+
+.stApp[data-theme="dark"] .hw-metric,
+.stApp.dark-mode .hw-metric {{
+  background: rgba(30,33,40,0.6) !important;
+  border-color: rgba(255,255,255,0.08) !important;
+}}
+.stApp[data-theme="dark"] .hw-metric .metric-val,
+.stApp.dark-mode .hw-metric .metric-val {{
+  color: #c5d0e6 !important;
+}}
+
+.stApp[data-theme="dark"] .status-ok,
+.stApp.dark-mode .status-ok {{ color: #4ade80 !important; }}
+
+/* Also handle the system preference for browsers */
+@media (prefers-color-scheme: dark) {{
+  :root {{
+    --aw-navy: #7eaed4;
+    --aw-red: #d4626f;
+    --aw-gold: #d4a843;
+    --aw-ink: #e6e8ec;
+    --aw-muted: #9ca3af;
+  }}
+}}
+
 </style>"""
 
 
@@ -331,7 +512,11 @@ code, .stCode {{
 
 
 def apply_theme() -> None:
-    """Inject the shared Americana CSS into the current Streamlit page."""
+    """Inject the shared Americana CSS into the current Streamlit page.
+
+    Detects dark mode and adds a `dark-mode` CSS class to the app root
+    so the dark palette overrides activate automatically.
+    """
     st.markdown(
         _CSS.format(
             fh=BRAND["font_heading"],
@@ -345,10 +530,77 @@ def apply_theme() -> None:
         ),
         unsafe_allow_html=True,
     )
+    # Inject JS to add dark-mode class when Streamlit is in dark mode.
+    # This bridges the gap between Streamlit's theme config and CSS selectors.
+    st.markdown(
+        """<script>
+        (function() {
+            const app = document.querySelector('.stApp');
+            if (!app) return;
+            const style = getComputedStyle(document.documentElement);
+            const bg = style.getPropertyValue('--background-color') || '';
+            // Detect dark theme by checking computed background luminance
+            const body = getComputedStyle(document.body);
+            const bodyBg = body.backgroundColor;
+            if (bodyBg) {
+                const m = bodyBg.match(/\\d+/g);
+                if (m && m.length >= 3) {
+                    const lum = (0.299*m[0] + 0.587*m[1] + 0.114*m[2]) / 255;
+                    if (lum < 0.35) {
+                        app.classList.add('dark-mode');
+                        app.setAttribute('data-theme', 'dark');
+                    }
+                }
+            }
+        })();
+        </script>""",
+        unsafe_allow_html=True,
+    )
 
 
 # Alias for backward compatibility with pax-americana
 apply_brand_css = apply_theme
+
+
+# ── Plotly theme helper ──────────────────────────────────────────────────────
+
+
+def plotly_layout(**overrides) -> dict:
+    """Return a Plotly layout dict that adapts to light/dark mode.
+
+    Usage:
+        fig.update_layout(**plotly_layout(height=400, xaxis_title="Time"))
+
+    In dark mode, uses plotly_dark template with dark backgrounds.
+    In light mode, uses plotly_white with transparent backgrounds.
+    """
+    dark = _is_dark_mode()
+    base = {
+        "template": "plotly_dark" if dark else "plotly_white",
+        "paper_bgcolor": "rgba(14,17,23,0.0)" if dark else "rgba(0,0,0,0)",
+        "plot_bgcolor": "rgba(14,17,23,0.0)" if dark else "rgba(0,0,0,0)",
+        "font": {
+            "family": BRAND["font_body"],
+            "color": "#e6e8ec" if dark else "#1a1a2e",
+        },
+        "colorway": (
+            ["#7eaed4", "#d4626f", "#d4a843", "#4ade80", "#a78bfa", "#f472b6"]
+            if dark else
+            ["#1a3a5c", "#8b2332", "#b8860b", "#2d6a4f", "#6b21a8", "#be185d"]
+        ),
+    }
+    base.update(overrides)
+    return base
+
+
+def plotly_line_color() -> str:
+    """Return the primary line color for the current mode."""
+    return "#7eaed4" if _is_dark_mode() else "#1a3a5c"
+
+
+def plotly_accent_color() -> str:
+    """Return the accent line color for the current mode."""
+    return "#d4626f" if _is_dark_mode() else "#8b2332"
 
 
 # ── Components ───────────────────────────────────────────────────────────────

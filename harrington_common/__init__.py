@@ -14,7 +14,12 @@ from .theme import (  # noqa: F401
     st_svg,
     esc,
     BRAND,
+    BRAND_DARK,
     PORTS,
+    is_dark_mode,
+    plotly_layout,
+    plotly_line_color,
+    plotly_accent_color,
 )
 
 # Compute layer (lazy — no heavy imports at module level)
