@@ -1,6 +1,6 @@
 [project]
 name = "harrington-common"
-version = "0.3.0"
+version = "0.3.1"
 description = "Shared theme, compute layer, reporting (LaTeX/gnuplot/PDF), and admin for Harrington apps"
 readme = "README.md"
 requires-python = ">=3.10"

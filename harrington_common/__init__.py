@@ -1,7 +1,7 @@
 """Harrington Common — shared theme, admin, compute, and components."""
 from __future__ import annotations
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 
 # Convenient re-exports
 from .theme import (  # noqa: F401
