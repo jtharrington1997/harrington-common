@@ -576,15 +576,15 @@ def render_compute_info():
         return
 
     info = backend_info()
-    with st.expander("⚡ Compute Backend", expanded=False):
+    with st.expander("Compute Backend", expanded=False):
         backend = info["backend"]
         if backend == "cupy":
-            st.success(f"🚀 GPU Accelerated — {info.get('gpu_name', 'CUDA')}")
+            st.success(f"[GPU] Accelerated — {info.get('gpu_name', 'CUDA')}")
             st.caption(f"CuPy {info.get('cupy_version', '?')} | "
                       f"VRAM: {info.get('gpu_memory_mb', 0):.0f} MB")
         elif backend == "numba":
-            st.info(f"⚡ Numba JIT — {info.get('numba_num_threads', '?')} threads")
+            st.info(f"[JIT] Numba — {info.get('numba_num_threads', '?')} threads")
             st.caption(f"Numba {info.get('numba_version', '?')}")
         else:
-            st.warning("🐢 NumPy only — install numba for 10-100× speedup")
+            st.warning("[CPU] NumPy only — install numba for 10-100× speedup")
         st.caption(f"NumPy {info['numpy_version']}")
